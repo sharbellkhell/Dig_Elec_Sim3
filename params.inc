@@ -25,7 +25,7 @@
  // ALU_A
  localparam
     ALUA_PCC = 2'b00,
-    ALUA_REG = 2'b01;
+    ALUA_REG = 2'b01,
 	ALUA_ZERO = 2'b10;
 
  // ALU_B
@@ -54,10 +54,10 @@
 
  // DATAW_SEL
  localparam
-	DATAW_REGB   = 1'b0;
+	DATAW_REGB   = 1'b0,
 	DATAW_ALUOUT = 1'b1;
 	
  // ADDR_SEL
  localparam
-	ADDR_ALUOUT1 = 1'b0;
+	ADDR_ALUOUT1 = 1'b0,
 	ADDR_ALUOUT2 = 1'b1;

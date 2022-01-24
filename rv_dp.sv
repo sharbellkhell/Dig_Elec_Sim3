@@ -32,8 +32,8 @@
      input logic bsel,
      input logic [3:0] alusel,
      input logic mdrwrite,
-	 input logic datawsel;
-	 input logic addrsel;
+	 input logic datawsel,
+	 input logic addrsel,
      
      // Clock and reset
      input logic clk,
@@ -127,7 +127,7 @@
 
  // ALU input A
  logic [DPWIDTH-1:0] alu_a;
- assign alu_a = (asel == ALUA_REG) ? a : ((asel == ALUA_ZERO) ? DPWIDTH'b0 : pcc);
+ assign alu_a = (asel == ALUA_REG) ? a : ((asel == ALUA_ZERO) ? {DPWIDTH{1'b0}} : pcc);
 
  // ALU input A
  logic [DPWIDTH-1:0] alu_b;
@@ -174,7 +174,7 @@
  // Memory
  // ======
  assign dmem_addr = (addrsel==ADDR_ALUOUT1) ? aluout : aluout2;
- assign dmem_dataout = (datasel==DATAW_REGB) ? b : aluout;
+ assign dmem_dataout = (datawsel==DATAW_REGB) ? b : aluout;
 
  always_ff @(posedge clk or posedge rst)
      if (rst)

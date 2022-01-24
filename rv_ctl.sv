@@ -24,8 +24,8 @@
      output logic bsel,
      output logic [3:0] alusel,
      output logic mdrwrite,
-	 output logic datawsel;
-	 output logic addrsel;
+	 output logic datawsel,
+	 output logic addrsel,
      
      // Clock and reset
      input logic clk,
@@ -77,6 +77,7 @@ sm_type current,next;
             casex (opcode_funct3)
                 LW:     next = LSW_ADDR;
                 SW:     next = LSW_ADDR;
+				SW2:    next = LSW_ADDR;
                 ALU:    next = RTYPE_ALU;
                 BEQ:    next = BEQ_EXEC;
                 JAL:    next = JAL_EXEC;
@@ -200,6 +201,8 @@ sm_type current,next;
         end
 		SW2_SUB: begin
 			memrw = 1'b1;
+			addrsel = 1'b1;
+			datawsel = 1'b1;
 		end
     endcase
  end
