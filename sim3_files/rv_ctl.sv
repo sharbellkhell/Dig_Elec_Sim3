@@ -20,10 +20,12 @@
      output logic [1:0] wbsel,
      output logic regwen,
      output logic [1:0] immsel,
-     output logic asel,
+     output logic [1:0]asel,
      output logic bsel,
      output logic [3:0] alusel,
      output logic mdrwrite,
+	 output logic datawsel,
+	 output logic addrsel,
      
      // Clock and reset
      input logic clk,
@@ -48,7 +50,8 @@
     RTYPE_ALU   = 6,
     RTYPE_WB    = 7,
     BEQ_EXEC    = 8,
-    JAL_EXEC    = 9
+    JAL_EXEC    = 9,
+	SW2_SUB     = 10
 	} sm_type;
 
 sm_type current,next;
@@ -74,6 +77,7 @@ sm_type current,next;
             casex (opcode_funct3)
                 LW:     next = LSW_ADDR;
                 SW:     next = LSW_ADDR;
+				SW2:    next = LSW_ADDR;
                 ALU:    next = RTYPE_ALU;
                 BEQ:    next = BEQ_EXEC;
                 JAL:    next = JAL_EXEC;
@@ -85,6 +89,7 @@ sm_type current,next;
             casex (opcode_funct3)
                 LW:     next = LW_MEM;
                 SW:     next = SW_MEM;
+				SW2:    next = SW_MEM;
                 // This is never reached
                 default:next = SW_MEM;
             endcase
@@ -94,7 +99,10 @@ sm_type current,next;
         LW_WB:
             next = FETCH;
         SW_MEM:
-            next = FETCH;
+			casex (opcode_funct3)
+				SW:     next = FETCH;
+				SW2:    next = SW2_SUB;
+			endcase
         RTYPE_ALU:
             next = RTYPE_WB;
         RTYPE_WB:
@@ -103,6 +111,8 @@ sm_type current,next;
             next = FETCH;
         JAL_EXEC:
             next = FETCH;
+		SW2_SUB:
+			next = FETCH;
         default: // Should never reach this
             next = FETCH;
     endcase
@@ -126,6 +136,8 @@ sm_type current,next;
     alusel = ALU_ADD;
     mdrwrite = 1'b0;
     memrw = 1'b0;
+	datawsel = 1'b0;
+	addrsel = 1'b0;
     case (current)
         FETCH:
         begin
@@ -153,7 +165,13 @@ sm_type current,next;
             regwen      = 1'b1;
         end
         SW_MEM:
-            memrw       = 1'b1;
+			if (opcode_funct3 == SW)
+				memrw       = 1'b1;
+			else if (opcode_funct3 == SW2) begin
+				asel = ALUA_ZERO;
+				bsel = ALUA_REG;
+				alusel = ALU_SUB;
+			end
         RTYPE_ALU: begin
             asel        = ALUA_REG;
             bsel        = ALUB_REG;
@@ -181,6 +199,11 @@ sm_type current,next;
             regwen      = 1'b1;
             wbsel       = WB_PC;
         end
+		SW2_SUB: begin
+			memrw = 1'b1;
+			addrsel = 1'b1;
+			datawsel = 1'b1;
+		end
     endcase
  end
 
