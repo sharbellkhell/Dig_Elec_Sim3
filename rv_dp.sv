@@ -28,10 +28,12 @@
      input logic [1:0] wbsel,
      input logic regwen,
      input logic [1:0] immsel,
-     input logic asel,
+     input logic [1:0] asel,
      input logic bsel,
      input logic [3:0] alusel,
      input logic mdrwrite,
+	 input logic datawsel;
+	 input logic addrsel;
      
      // Clock and reset
      input logic clk,
@@ -42,7 +44,7 @@
  `include "params.inc"
 
  // Stage registers
- logic [DPWIDTH-1:0] pc, pcc, ir, a, b, aluout, mdr;
+ logic [DPWIDTH-1:0] pc, pcc, ir, a, b, aluout, aluout2, mdr;
 
  // Fetch
  assign imem_addr = pc;
@@ -125,7 +127,7 @@
 
  // ALU input A
  logic [DPWIDTH-1:0] alu_a;
- assign alu_a = (asel == ALUA_REG) ? a : pcc;
+ assign alu_a = (asel == ALUA_REG) ? a : ((asel == ALUA_ZERO) ? DPWIDTH'b0 : pcc);
 
  // ALU input A
  logic [DPWIDTH-1:0] alu_b;
@@ -162,11 +164,17 @@
      else
          aluout     <= alu_result;
 
+ always_ff @(posedge clk or posedge rst)
+     if (rst)
+         aluout2     <= 0;
+     else
+         aluout2     <= aluout;
+
 
  // Memory
  // ======
- assign dmem_addr = aluout;
- assign dmem_dataout = b;
+ assign dmem_addr = (addrsel==ADDR_ALUOUT1) ? aluout : aluout2;
+ assign dmem_dataout = (datasel==DATAW_REGB) ? b : aluout;
 
  always_ff @(posedge clk or posedge rst)
      if (rst)

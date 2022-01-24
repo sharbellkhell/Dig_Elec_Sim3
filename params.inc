@@ -5,6 +5,7 @@
  localparam
     LW      = 10'b0000011_010,
     SW      = 10'b0100011_010,
+	SW2     = 10'b0100011_011,
     ALU     = 10'b0110011_xxx,
     BEQ     = 10'b1100011_000,
     JAL     = 10'b1101111_xxx;
@@ -23,8 +24,9 @@
 
  // ALU_A
  localparam
-    ALUA_PCC = 1'b0,
-    ALUA_REG = 1'b1;
+    ALUA_PCC = 2'b00,
+    ALUA_REG = 2'b01;
+	ALUA_ZERO = 2'b10;
 
  // ALU_B
  localparam
@@ -50,3 +52,12 @@
     WB_ALUOUT   = 2'b01,
     WB_PC       = 2'b10;
 
+ // DATAW_SEL
+ localparam
+	DATAW_REGB   = 1'b0;
+	DATAW_ALUOUT = 1'b1;
+	
+ // ADDR_SEL
+ localparam
+	ADDR_ALUOUT1 = 1'b0;
+	ADDR_ALUOUT2 = 1'b1;

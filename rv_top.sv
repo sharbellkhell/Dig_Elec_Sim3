@@ -37,10 +37,12 @@
  logic [1:0] wbsel;
  logic regwen;
  logic [1:0] immsel;
- logic asel;
+ logic [1:0] asel;
  logic bsel;
  logic [3:0] alusel;
  logic mdrwrite;
+ logic datawsel;
+ logic addrsel;
      
  // Data path
  // =========
@@ -72,6 +74,8 @@
      .bsel(bsel),
      .alusel(alusel),
      .mdrwrite(mdrwrite),
+	 .datawsel(datawsel),
+	 .addrsel(addrsel),
      
      // Clock and reset
      .clk(clk),
@@ -100,6 +104,8 @@
      .bsel(bsel),
      .alusel(alusel),
      .mdrwrite(mdrwrite),
+	 .datawsel(datawsel),
+	 .addrsel(addrsel),
      
      // Clock and reset
      .clk(clk),
