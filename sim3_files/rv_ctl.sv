@@ -169,7 +169,7 @@ sm_type current,next;
 				memrw       = 1'b1;
 			else if (opcode_funct3 == SW2) begin
 				asel = ALUA_ZERO;
-				bsel = ALUA_REG;
+				bsel = ALUB_REG;
 				alusel = ALU_SUB;
 			end
         RTYPE_ALU: begin
