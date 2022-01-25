@@ -201,8 +201,8 @@ sm_type current,next;
         end
 		SW2_SUB: begin
 			memrw = 1'b1;
-			addrsel = 1'b1;
-			datawsel = 1'b1;
+			addrsel = ADDR_ALUOUT2;
+			datawsel = DATAW_ALUOUT;
 		end
     endcase
  end
